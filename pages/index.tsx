@@ -2,10 +2,16 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 
+import { useMemo } from "react";
+
 import Button from "../components/Button";
+import Graph from "../components/Graph";
 
 import CDCL from "../lib/CDCL";
 import Literal from "../lib/Literal";
+import ImmutableGraph from "../lib/ImmutableGraph";
+import Node from "../lib/Node";
+import { Network, DataSet } from "vis-network/standalone";
 
 function solveExample1_4() {
   const cdcl = new CDCL([
@@ -34,6 +40,77 @@ function solveExample1_4() {
 }
 
 const Home: NextPage = () => {
+  const cdcl = useMemo(() => {
+    const cdcl = new CDCL([
+      [
+        new Literal(false, "p1"),
+        new Literal(true, "p2"),
+        new Literal(false, "p4"),
+      ],
+      [
+        new Literal(false, "p1"),
+        new Literal(false, "p2"),
+        new Literal(true, "p3"),
+      ],
+      [new Literal(false, "p3"), new Literal(false, "p4")],
+      [
+        new Literal(true, "p4"),
+        new Literal(true, "p5"),
+        new Literal(true, "p6"),
+      ],
+      [new Literal(false, "p5"), new Literal(true, "p7")],
+      [
+        new Literal(false, "p6"),
+        new Literal(true, "p7"),
+        new Literal(false, "p8"),
+      ],
+      [
+        new Literal(false, "p1"),
+        new Literal(false, "p8"),
+        new Literal(false, "p2"),
+        new Literal(false, "p7"),
+        new Literal(false, "p6"),
+        new Literal(false, "p5"),
+        new Literal(false, "p3"),
+        new Literal(true, "p4"),
+      ],
+      [
+        new Literal(false, "p1"),
+        new Literal(false, "p8"),
+        new Literal(true, "p2"),
+        new Literal(false, "p7"),
+        new Literal(false, "p6"),
+        new Literal(false, "p5"),
+        new Literal(false, "p3"),
+        new Literal(true, "p4"),
+      ],
+      [
+        new Literal(false, "p1"),
+        new Literal(false, "p8"),
+        new Literal(true, "p2"),
+        new Literal(false, "p7"),
+        new Literal(false, "p6"),
+        new Literal(false, "p5"),
+        new Literal(true, "p3"),
+        new Literal(true, "p4"),
+      ],
+      [
+        new Literal(false, "p1"),
+        new Literal(false, "p8"),
+        new Literal(false, "p2"),
+        new Literal(false, "p7"),
+        new Literal(false, "p6"),
+        new Literal(true, "p5"),
+        new Literal(false, "p3"),
+        new Literal(true, "p4"),
+      ],
+    ]);
+
+    cdcl.solve();
+
+    return cdcl;
+  }, []);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
@@ -41,7 +118,11 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
+      {cdcl.history.map((snap, idx) => (
+        <Graph key={idx} snapshot={snap} />
+      ))}
+
+      {/* <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
         <h1 className="text-6xl font-bold">
           Welcome to{" "}
           <a className="text-blue-600" href="https://nextjs.org">
@@ -113,7 +194,7 @@ const Home: NextPage = () => {
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
         </a>
-      </footer>
+      </footer> */}
     </div>
   );
 };
